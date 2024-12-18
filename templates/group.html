@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ group.name }}</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+body {
+    background-image: url("{{ url_for('static', filename='nsei.png') }}");
+    background-size: cover;
+    background-color: #f4f4f4;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+
+.container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #007bff;
+    font-weight: 600;
+}
+
+.btn {
+    font-weight: bold;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.list-group-item {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f1f1f1;
+}
+
+.alert {
+    margin-bottom: 20px;
+}
+
+.alert-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.alert-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.alert-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.alert-warning {
+    background-color: #ffc107;
+    color: white;
+}
+
+textarea {
+    resize: none;
+    border-radius: 5px;
+}
+
+.form-control {
+    border-radius: 5px;
+}
+
+
+    </style>
+</head>
+<body font-family: Poppins>
+    <div class="container">
+        <h1 class="text-center mt-5">{{ group.name }}</h1>
+        <p class="text-center">{{ group.description }}</p>
+
+        <!-- Exibe mensagens de flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul>
+                    {% for category, message in messages %}
+                        <li class="alert alert-{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Lista as mensagens do grupo -->
+        <div class="list-group">
+            {% for message in messages %}
+                <div class="list-group-item">
+                    <strong>{{ message.user.username }}:</strong>
+                    <p>{{ message.content }}</p>
+                    <small>{{ message.created_at }}</small>
+
+                    {% if message.user_id == session['user_id'] %}
+                        <!-- Exibe o botão de excluir se o usuário for o dono da mensagem -->
+                        <form method="POST" action="{{ url_for('delete_group_message', message_id=message.id) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p class="text-center">Nenhuma mensagem ainda.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Formulário para enviar mensagem -->
+        <form method="POST" class="mt-4">
+            <div class="form-group">
+                <textarea name="content" class="form-control" rows="4" placeholder="Digite sua mensagem..." required></textarea>
+            </div>
+            <input type="submit" value="Enviar" class="btn btn-primary">
+        </form>
+
+        <!-- Botão para voltar ao fórum -->
+        <div class="mt-4 text-center">
+            <a href="{{ url_for('forum') }}" class="btn btn-secondary">Voltar ao Fórum</a>
+        </div>
+    </div>
+</body>
+</html>

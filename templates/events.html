@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventos</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Importando a fonte Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+/* Aplicando a fonte Poppins ao body */
+body {
+    background-image: url("{{ url_for('static', filename='fortinite.png') }}");
+    background-size: cover;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilo da container */
+.container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin-top: 50px;
+}
+
+/* Estilo do título */
+h1 {
+    color: #007bff;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Estilo das listas de eventos */
+li.list-group-item {
+    padding: 20px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo do título do evento */
+h5 {
+    color: #343a40;
+    font-weight: 600;
+}
+
+/* Estilo da descrição do evento */
+p {
+    color: #666;
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+/* Estilo dos participantes */
+h6 {
+    color: #007bff;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+/* Estilo dos botões */
+.btn {
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #c82333;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #218838;
+}
+
+/* Estilo dos links */
+a {
+    text-decoration: none;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Eventos</h1>
+        
+        {% for event in events %}
+        <li class="list-group-item">
+            <h5>{{ event.name }}</h5>
+            <p>{{ event.description }}</p>
+            
+            <h6>Participantes:</h6>
+            <ul>
+                {% for participant in event_participants[event.id] %}
+                    <li>{{ participant.username }}</li>
+                {% endfor %}
+            </ul>
+    
+            <form method="POST" action="{{ url_for('join_event', event_id=event.id) }}">
+                <input type="submit" value="Inscrever-se" class="btn btn-primary">
+            </form>
+    
+            {% if session["user_id"] == event.user_id %}
+            <form method="POST" action="{{ url_for('delete_event', event_id=event.id) }}" class="mt-2">
+                <input type="submit" value="Excluir Evento" class="btn btn-danger">
+            </form>
+            
+            {% endif %}
+        </li>
+    {% endfor %}
+    
+        <div class="text-center mt-4">
+            <a href="{{ url_for('create_event') }}" class="btn btn-success">Criar Novo Evento</a>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ url_for('home') }}" class="btn btn-danger">Voltar</a>
+        </div>
+    </div>
+</body>
+</html>
